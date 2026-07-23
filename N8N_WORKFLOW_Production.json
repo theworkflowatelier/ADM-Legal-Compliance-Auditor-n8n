@@ -1,0 +1,699 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -768,
+        432
+      ],
+      "id": "1d1aec34-5a49-4837-b0bd-39a40b4859cf",
+      "name": "[Ingest] Download Contract Payload",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "CJ4eTmFRinHxmKje",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# STAGE 1: SECURE INGESTION & CONFIGURATION PIPELINE\n\n**Node 1:** [Trigger] Watch Inbound Google Drive\n\n**Node 2:** ⚙️ [Config] Target Jurisdiction Allocation\n\n**Node 3:** [Ingest] Download Raw PDF Stream\n\n**Node 4:** [Parser] Extract Text & Sanitize Payload\n\n**Node 5:** [Router] Evaluate Document Viability",
+        "height": 320,
+        "width": 864,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1184,
+        16
+      ],
+      "typeVersion": 1,
+      "id": "14a4a3bd-a8b4-43f5-acdb-21dc5ffea0aa",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "# STAGE 2: MULTI-MODAL COMPLIANCE AUDIT (GEMINI 2.5)\n\n**Node 6 (Text):** [AI Core] ADM Legal Auditor (Text Engine)\n\n**Node 7 (Vision):** [AI Core] ADM Legal Auditor (Vision Engine)",
+        "height": 320,
+        "width": 384,
+        "color": "#784F07"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "0fbaca0e-fe92-42fb-95ed-8ba628f61059",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# ⚖️ Enterprise Legal Compliance Auditor\n**Asset ID:** TWA-LEG-2026-V1  \n**Target:** 2026 ADM & Privacy Act Regulatory Audits  \n**Core Engine:** n8n + Google Gemini API + Google Sheets  \n**Built By:** The Workflow Atelier\n\n---\n### 💡 What This Blueprint Achieves\nAutomatically inspects incoming vendor agreements and contracts for regulatory compliance gaps, outputting structured risk data to an executive reporting dashboard in seconds.",
+        "height": 352,
+        "width": 688,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1968,
+        304
+      ],
+      "typeVersion": 1,
+      "id": "bd5bc269-7955-41c6-b651-796bbdadabb1",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "=Target Jurisdiction: {{ $('⚙️ REGION CONFIGURATION').item.json.Target_Jurisdiction }}\n\nFirst, classify the document. If it is NOT a Privacy Policy, Terms of Service, or Data Processing Agreement (e.g., invoices, user manuals), set \"Applicable\": false.\n\nAudit the text for Automated Decision-Making (ADM) and AI profiling compliance strictly under the specified Target Jurisdiction:\n- If \"US\": Audit against CCPA/CPRA rules (ADM logic transparency, opt-out rights).\n- If \"Canada\": Audit against CPPA / Bill C-27 rules (algorithmic transparency, right to explanation).\n- If \"AUS\": Audit against Privacy Act Reform rules (mandatory disclosure for automated decisions).\n- If \"Global\": Audit against all three frameworks.\n\nOutput strictly valid JSON with these exact keys:\n{\n  \"Applicable\": true/false,\n  \"Document_Type\": \"Privacy Policy / Terms of Service / Unrelated\",\n  \"Target_Jurisdiction\": \"{{ $('⚙️ REGION CONFIGURATION').item.json.Target_Jurisdiction }}\",\n  \"Risk_Level\": \"High / Medium / Low / N/A\",\n  \"Missing_Clauses\": \"[Specific missing legal clauses strictly for the target region]\",\n  \"Existing_Deficient_Text\": \"[Extract the exact verbatim sentence from the text that mentions automated processing, algorithms, or profiling without providing the legally required disclosures/opt-outs. Do not return 'Not found'. If they lack ADM mentions entirely, extract their broadest data collection or personalization clause.]\",\n  \"Action_Required\": \"[1-2 sentence concrete remediation step]\"\n}\n\nText to analyze:\n{{ $json.text }}",
+        "inputType": "binary",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        592
+      ],
+      "id": "2c240f38-b9b2-4639-b21f-98e46a88df14",
+      "name": "[AI Core] Audit ADM Compliance (Vision)",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jocfFZcjAGlDUX2q",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Target Jurisdiction: {{ $('⚙️ REGION CONFIGURATION').item.json.Target_Jurisdiction }}\n\nFirst, classify the document. If it is NOT a Privacy Policy, Terms of Service, or Data Processing Agreement (e.g., invoices, user manuals), set \"Applicable\": false.\n\nAudit the text for Automated Decision-Making (ADM) and AI profiling compliance strictly under the specified Target Jurisdiction:\n- If \"US\": Audit against CCPA/CPRA rules (ADM logic transparency, opt-out rights).\n- If \"Canada\": Audit against CPPA / Bill C-27 rules (algorithmic transparency, right to explanation).\n- If \"AUS\": Audit against Privacy Act Reform rules (mandatory disclosure for automated decisions).\n- If \"Global\": Audit against all three frameworks.\n\nCRITICAL RULE FOR \"Deficient_Clause_Quote\":\n- You are STRICTLY FORBIDDEN from returning \"Not found\", \"N/A\", or empty values.\n- Do NOT search for the missing clause itself. Instead, extract the exact verbatim sentence from the document where they admit to processing data or using automated systems (e.g., look for sentences containing \"automatically process\", \"systems\", \"personalize\", \"analytics\", or \"collect\").\n- Example snippet to quote if found: \"Our systems automatically process content and communications you and others provide...\"\n\nOutput strictly valid JSON with these exact keys:\n{\n  \"Applicable\": true/false,\n  \"Document_Type\": \"Privacy Policy / Terms of Service / Unrelated\",\n  \"Target_Jurisdiction\": \"{{ $('⚙️ REGION CONFIGURATION').item.json.Target_Jurisdiction }}\",\n  \"Risk_Level\": \"High / Medium / Low / N/A\",\n  \"Missing_Clauses\": \"[Specific missing legal clauses strictly for the target region]\",\n  \"Deficient_Clause_Quote\": \"[Exact verbatim sentence from the text demonstrating automated processing or data collection. NEVER return 'Not found']\",\n  \"Action_Required\": \"[1-2 sentence concrete remediation step]\"\n}\n\nText to analyze:\n{{ $json.text }}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        96,
+        368
+      ],
+      "id": "d76f65d4-327a-403a-9b48-94c4db5d65d3",
+      "name": "[AI Core] Audit ADM Compliance (Text)",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jocfFZcjAGlDUX2q",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d59df2e1-3251-47a1-9b0d-16f680ce4ff2",
+              "leftValue": "={{ $json.text.trim().length }}",
+              "rightValue": 50,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -80,
+        432
+      ],
+      "id": "848b4452-eb22-4ac7-8f2a-5e2505b0c89d",
+      "name": "[Router] Check Document Type"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Document Name": "={{ $('[Trigger] Watch Inbound Google Drive').first().json.name }}",
+            "Risk Level": "={{ $json.ai_data.Risk_Level }}",
+            "Missing Clause Details": "={{ $json.ai_data.Missing_Clauses }}",
+            "#": "={{ $now.toFormat('yyyyMMddHHmmss') }}",
+            "Date": "={{ $now.toFormat('yyyy-MM-dd HH:mm') }}",
+            "Target Jurisdiction": "={{ $json.ai_data.Target_Jurisdiction }}",
+            "Action Required": "={{ $json.ai_data.Action_Required }}",
+            "Existing Deficient Text (Context)": "={{ $json.ai_data.Deficient_Clause_Quote }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "#",
+              "displayName": "#",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Document Name",
+              "displayName": "Document Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Risk Level",
+              "displayName": "Risk Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Target Jurisdiction",
+              "displayName": "Target Jurisdiction",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Missing Clause Details",
+              "displayName": "Missing Clause Details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Existing Deficient Text (Context)",
+              "displayName": "Existing Deficient Text (Context)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Action Required",
+              "displayName": "Action Required",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        816,
+        400
+      ],
+      "id": "a742b31e-d6e6-447d-a5da-89012fa4c8b9",
+      "name": "[Database] Log Audit to Dashboard",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iKooKXTIYA7VjAZu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => {\n  let rawText = item.json.content?.parts?.[0]?.text || item.json.text || item.json.output || \"\";\n  rawText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();\n\n  let parsedData = {};\n  try {\n    parsedData = JSON.parse(rawText);\n  } catch (e) {\n    const jsonMatch = rawText.match(/\\{[\\s\\S]*\\}/);\n    parsedData = jsonMatch ? JSON.parse(jsonMatch[0]) : {};\n  }\n\n  const isApplicable = parsedData.Applicable !== false;\n  \n  // Convert array to bulleted string if Gemini outputs an array\n  let missingClauses = parsedData.Missing_Clauses || \"Review document manually.\";\n  if (Array.isArray(missingClauses)) {\n    missingClauses = missingClauses.map(clause => \"• \" + clause).join(\"\\n\");\n  }\n\n  return {\n    json: {\n      ai_data: {\n        Applicable: isApplicable,\n        Document_Type: parsedData.Document_Type || \"Legal Document\",\n        Target_Jurisdiction: parsedData.Target_Jurisdiction || item.json.Target_Jurisdiction || \"US\",\n        Risk_Level: isApplicable ? (parsedData.Risk_Level || \"High\") : \"N/A\",\n        Missing_Clauses: isApplicable ? missingClauses : \"None\",\n        Deficient_Clause_Quote: isApplicable ? (parsedData.Deficient_Clause_Quote) : \"N/A\",\n        Action_Required: isApplicable ? (parsedData.Action_Required || \"Review manually.\") : \"No action needed.\"\n      }\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        400
+      ],
+      "id": "db4611d2-cbc4-44ba-931f-372bec03ec2c",
+      "name": "[Transform] Parse JSON Schema"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -592,
+        432
+      ],
+      "id": "734a7ce9-f1f2-40cf-8d56-3ce10a28c9a4",
+      "name": "[Parser] Extract Raw Contract Text"
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('[Ingest] Download Contract Payload').first().json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        96,
+        672
+      ],
+      "id": "00686b30-550f-4307-a90c-d00d2342c702",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "CJ4eTmFRinHxmKje",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8e5a4748-abf6-46f1-8c72-7d1358cb1ed6",
+              "name": "Target_Jurisdiction",
+              "value": "US",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -960,
+        432
+      ],
+      "id": "cb07be9a-b139-46f9-8d65-883d3ddf156e",
+      "name": "⚙️ REGION CONFIGURATION"
+    },
+    {
+      "parameters": {
+        "content": "# STAGE 3: DATA NORMALIZATION & DASHBOARD LOGGING\n\n**Node 8:** [Transform] Enforce JSON Schema\n\n**Node 9:** [Database] Append Audit Record to Sheets",
+        "height": 240,
+        "width": 352,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        576,
+        64
+      ],
+      "typeVersion": 1,
+      "id": "c860f497-1509-487e-b106-2ab340944429",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        432
+      ],
+      "id": "844b1e49-f8e3-44d2-9648-63c23aac392b",
+      "name": "[Trigger] Watch Inbound Google Drive",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "CJ4eTmFRinHxmKje",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -368,
+        432
+      ],
+      "id": "dd23bc45-9470-423d-a389-a517c5cb1ba9",
+      "name": "[Loop] Batch Execution Throttle1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        832,
+        896
+      ],
+      "id": "3544cb90-262d-4421-afc5-a332f3508629",
+      "name": "[Database] Log API Failure Queue",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "iKooKXTIYA7VjAZu",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "🔴 **REQUIRED ACTION: Double-click this node to select your inbound Google Drive folder**",
+        "height": 176,
+        "width": 176,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1216,
+        624
+      ],
+      "typeVersion": 1,
+      "id": "8d19b00d-1cb8-4e7a-a03c-d72ba4c8d332",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "🔴 **REQUIRED ACTION: Double-click this node to \"Target_Jurisdiction\" to US or AUS or CAN or Global based on you region.**",
+        "height": 192,
+        "width": 192,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1008,
+        624
+      ],
+      "typeVersion": 1,
+      "id": "28ef94ae-b89e-4fed-a07f-1af15a19b8f0",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "🔴 **REQUIRED ACTION:** Double-click this node to select your copied Google Sheet template \"Compliance Audit Dashboard\" & select Sheet as \"Dashboard\"",
+        "height": 224,
+        "width": 192,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        784,
+        608
+      ],
+      "typeVersion": 1,
+      "id": "cc67394d-5b07-40b4-baf4-e3961113dd95",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "🔴 **REQUIRED ACTION:** Double-click this node to select your copied Google Sheet template \"Compliance Audit Dashboard\" & select Sheet as \"Failed Audits Queue\"",
+        "height": 240,
+        "width": 192,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        800,
+        1088
+      ],
+      "typeVersion": 1,
+      "id": "10609bda-ccdd-4db0-ad5f-fe8931939df0",
+      "name": "Sticky Note7"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "[Ingest] Download Contract Payload": {
+      "main": [
+        [
+          {
+            "node": "[Parser] Extract Raw Contract Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Router] Check Document Type": {
+      "main": [
+        [
+          {
+            "node": "[AI Core] Audit ADM Compliance (Text)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[AI Core] Audit ADM Compliance (Vision)": {
+      "main": [
+        [
+          {
+            "node": "[Transform] Parse JSON Schema",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Database] Log API Failure Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[AI Core] Audit ADM Compliance (Text)": {
+      "main": [
+        [
+          {
+            "node": "[Transform] Parse JSON Schema",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "[Database] Log API Failure Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Transform] Parse JSON Schema": {
+      "main": [
+        [
+          {
+            "node": "[Database] Log Audit to Dashboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Parser] Extract Raw Contract Text": {
+      "main": [
+        [
+          {
+            "node": "[Loop] Batch Execution Throttle1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "[AI Core] Audit ADM Compliance (Vision)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "⚙️ REGION CONFIGURATION": {
+      "main": [
+        [
+          {
+            "node": "[Ingest] Download Contract Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Trigger] Watch Inbound Google Drive": {
+      "main": [
+        [
+          {
+            "node": "⚙️ REGION CONFIGURATION",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Database] Log Audit to Dashboard": {
+      "main": [
+        [
+          {
+            "node": "[Loop] Batch Execution Throttle1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "[Loop] Batch Execution Throttle1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "[Router] Check Document Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "715eb25f-d5c1-47b4-a1cd-17b85fcdab00",
+  "meta": {
+    
+  },
+  "nodeGroups": [],
+  "id": "8uMR9UE1hFISDwvS",
+  "tags": []
+}
