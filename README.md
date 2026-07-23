@@ -2,7 +2,7 @@
 
 An enterprise-grade headless automation architecture designed to ingest dense vendor contracts (100+ pages), evaluate complex legal syntax against Automated Decision-Making (ADM) privacy frameworks, and log verbatim deficient clauses directly into executive reporting dashboards.
 
-[![Get Turnkey Production Bundle](https://img.shields.io/badge/📦_Download_Full_Production_Bundle-$499-blue?style=for-the-badge)]([INSERT_YOUR_GUMROAD_LINK_HERE](https://theworkflowatelier.gumroad.com/l/admcap))
+[![Get Turnkey Production Bundle](https://img.shields.io/badge/📦_Download_Full_Production_Bundle-$499-blue?style=for-the-badge)](https://theworkflowatelier.gumroad.com/l/admcap)
 
 ---
 
